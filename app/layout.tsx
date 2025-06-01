@@ -3,7 +3,7 @@ import { inter } from '@/app/styles/fonts';
 import { Metadata } from 'next';
 import { SessionProvider } from "next-auth/react";
 import Header from '@/app/components/Header';
-import getServerSession from "next-auth";
+import Footer from '@/app/components/Footer';
 
 export const metadata: Metadata = {
   title: {
@@ -25,6 +25,7 @@ export default function RootLayout({
         <SessionProvider>
           <Header />
           {children}
+          <Footer />
         </SessionProvider>
       </body>
     </html>

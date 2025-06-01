@@ -2,7 +2,6 @@
 
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-import { lusitana } from '@/app/styles/fonts';
 import {
   AtSymbolIcon,
   KeyIcon,
@@ -10,15 +9,10 @@ import {
 } from '@heroicons/react/24/outline';
 import { ArrowRightIcon } from '@heroicons/react/20/solid';
 import { Button } from './button';
-import { useActionState } from 'react';
 import { authenticate } from '@/app/lib/actions';
 
 
 export default function LoginForm() {
-  // const [errorMessage, formAction, isPending] = useActionState(
-  //   authenticate,
-  //   undefined,
-  // );
   const router = useRouter();
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [isPending, setIsPending] = useState(false);
@@ -29,12 +23,11 @@ export default function LoginForm() {
 
     const formData = new FormData(event.currentTarget);
     const result = await authenticate(undefined, formData);
-    // console.log("result", result);
-    await router.refresh(); // セッション情報を更新
+    await router.refresh();
     window.location.href = "/mypage";
     if (result === null) {
       // ログイン成功時
-      window.location.href = "/mypage"; // マイページにリダイレクト
+      window.location.href = "/mypage";
     } else {
       setErrorMessage(result ?? null);
     }
@@ -43,12 +36,8 @@ export default function LoginForm() {
   };
 
   return (
-    // <form action={formAction} className="space-y-3">
     <form onSubmit={handleSubmit} className="space-y-3">
       <div className="flex-1 rounded-lg bg-gray-50 px-6 pb-4 pt-8">
-        {/* <h1 className={`${lusitana.className} mb-3 text-2xl`}>
-          Please log in to continue.
-        </h1> */}
         <div className="w-full">
           <div>
             <label
