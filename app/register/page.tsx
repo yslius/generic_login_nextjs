@@ -31,6 +31,7 @@ export default function RegisterPage() {
 
       router.push("/login");
     } catch (e) {
+      console.error("Registration error:", e);
       setError("登録に失敗しました");
     }
   };

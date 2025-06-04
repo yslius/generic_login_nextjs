@@ -1,18 +1,14 @@
 'use client'
 
-import { useState, useEffect } from 'react';
-import { useSession } from "next-auth/react"
+import { useState } from 'react';
+import Link from "next/link";
 
 const MyPage = () => {
-  const { data: session } = useSession();
-  const [profile, setProfile] = useState<{
+  const [profile] = useState<{
     id: string;
     name: string;
     email: string;
   } | null>(null);
-  const [favoriteSchools, setFavoriteSchools] = useState<string[]>([]);
-  const [alerts, setAlerts] = useState<string[]>([]);
-  const [events, setEvents] = useState<string[]>([]);
 
   return (
     <div className="min-h-screen h-full bg-gray-100">
@@ -30,10 +26,10 @@ const MyPage = () => {
               <h2 className="text-lg font-semibold mb-2">メニュー</h2>
               <ul>
                 <li className="mb-2">
-                  <a href="/" className="hover:text-blue-500">トップページ</a>
+                  <Link href="/" className="hover:text-blue-500">トップへ</Link>
                 </li>
                 <li className="mb-2">
-                  <a href="/mypage" className="hover:text-blue-500">マイページ</a>
+                  <Link href="/mypage" className="hover:text-blue-500">マイページ</Link>
                 </li>
               </ul>
             </aside>
