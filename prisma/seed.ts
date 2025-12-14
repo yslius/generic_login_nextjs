@@ -6,7 +6,6 @@ const prisma = new PrismaClient();
 async function main() {
   // 既存データをクリア（開発環境のみ推奨）
   await prisma.account.deleteMany();
-  await prisma.session.deleteMany();
   await prisma.verificationToken.deleteMany();
   await prisma.user.deleteMany();
 

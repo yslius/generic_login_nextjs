@@ -15,7 +15,7 @@ model User {
   image         String?
   password      String?
   accounts      Account[]
-  sessions      Session[]
+  // sessions      Session[] を削除
 }
 
 model Account {
@@ -37,13 +37,14 @@ model Account {
   @@unique([provider, providerAccountId])
 }
 
-model Session {
-  id           String   @id @default(cuid())
-  sessionToken String   @unique
-  userId       String
-  expires      DateTime
-  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-}
+// Sessionモデルを削除
+// model Session {
+//   id           String   @id @default(cuid())
+//   sessionToken String   @unique
+//   userId       String
+//   expires      DateTime
+//   user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+// }
 
 model VerificationToken {
   identifier String
