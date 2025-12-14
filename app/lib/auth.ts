@@ -1,20 +1,22 @@
 import NextAuth from "next-auth";
+import Google from "next-auth/providers/google"
 import Credentials from "next-auth/providers/credentials";
+import { PrismaAdapter } from "@next-auth/prisma-adapter"
 import { z } from "zod";
-import { PrismaClient } from "@prisma/client";
 import type { User } from "@/app/lib/definitions";
 import bcrypt from "bcryptjs";
 import type { NextAuthConfig } from "next-auth";
+import { prisma } from "@/app/lib/prisma"; 
 
-const prisma = new PrismaClient();
+// const prisma = new PrismaClient();
 
 async function getUser(email: string): Promise<User | undefined> {
   try {
-    const user = await prisma.$queryRaw<
-      User[]
-    >`SELECT * FROM users WHERE email=${email}`;
-    console.log(user);
-    return user[0];
+    const user = await prisma.user.findUnique({
+      where: { email },
+    });
+    console.log("getUser result:", user); // ← デバッグ追加
+    return user as unknown as User | undefined;
   } catch (error) {
     console.error("Failed to fetch user:", error);
     throw new Error("Failed to fetch user.");
@@ -22,10 +24,15 @@ async function getUser(email: string): Promise<User | undefined> {
 }
 
 export const config = {
+  adapter: PrismaAdapter(prisma),
   theme: {
     logo: "https://next-auth.js.org/img/logo/logo-sm.png",
   },
   providers: [
+    Google({
+      clientId: process.env.GOOGLE_CLIENT_ID!,
+      clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
+    }),
     Credentials({
       async authorize(credentials) {
         console.log("async authorize(credentials)");
@@ -54,6 +61,7 @@ export const config = {
       return token;
     },
   },
+  session: { strategy: "jwt" },
 } satisfies NextAuthConfig;
 
 export const { handlers, auth, signIn, signOut } = NextAuth(config);

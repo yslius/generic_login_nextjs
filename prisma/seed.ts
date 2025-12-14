@@ -4,6 +4,12 @@ import { PrismaClient } from '@prisma/client';
 const prisma = new PrismaClient();
 
 async function main() {
+  // 既存データをクリア（開発環境のみ推奨）
+  await prisma.account.deleteMany();
+  await prisma.session.deleteMany();
+  await prisma.verificationToken.deleteMany();
+  await prisma.user.deleteMany();
+
   // ユーザーのシードデータ
   const hashedPasswordsUser = await Promise.all([
     bcrypt.hash('password1', 10),
@@ -13,13 +19,33 @@ async function main() {
     bcrypt.hash('password5', 10),
   ]);
 
-  const users = await prisma.user.createMany({
+  await prisma.user.createMany({
     data: [
-      { email: 'user1@example.com', password: hashedPasswordsUser[0], name: '山田太郎', lineId: 'line12345', isSubscribed: true },
-      { email: 'user2@example.com', password: hashedPasswordsUser[1], name: '鈴木花子', lineId: 'line67890', isSubscribed: false },
-      { email: 'user3@example.com', password: hashedPasswordsUser[2], name: '佐藤二郎', lineId: null, isSubscribed: true },
-      { email: 'user4@example.com', password: hashedPasswordsUser[3], name: '田中三郎', lineId: 'line24680', isSubscribed: false },
-      { email: 'user5@example.com', password: hashedPasswordsUser[4], name: '高橋四郎', lineId: null, isSubscribed: true },
+      { 
+        email: 'user1@example.com', 
+        password: hashedPasswordsUser[0], 
+        name: '山田太郎'
+      },
+      { 
+        email: 'user2@example.com', 
+        password: hashedPasswordsUser[1], 
+        name: '鈴木花子',
+      },
+      { 
+        email: 'user3@example.com', 
+        password: hashedPasswordsUser[2], 
+        name: '佐藤二郎',
+      },
+      { 
+        email: 'user4@example.com', 
+        password: hashedPasswordsUser[3], 
+        name: '田中三郎'
+      },
+      { 
+        email: 'user5@example.com', 
+        password: hashedPasswordsUser[4], 
+        name: '高橋四郎'
+      },
     ],
   });
 

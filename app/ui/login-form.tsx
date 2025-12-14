@@ -10,6 +10,7 @@ import {
 import { ArrowRightIcon } from '@heroicons/react/20/solid';
 import { Button } from './button';
 import { authenticate } from '@/app/lib/actions';
+import { signIn } from 'next-auth/react';
 
 
 export default function LoginForm() {
@@ -93,6 +94,17 @@ export default function LoginForm() {
               <p className="text-sm text-red-500">{errorMessage}</p>
             </>
           )}
+        </div>
+
+        {/* Googleログインボタン */}
+        <div className="mt-6 border-t pt-6">
+          <button
+            type="button"
+            onClick={() => signIn("google", { callbackUrl: "/mypage" })}
+            className="w-full flex items-center justify-center gap-2 border border-gray-300 hover:bg-gray-50 text-gray-700 font-bold py-2 px-4 rounded transition-colors"
+          >
+            🔵 Googleでログイン
+          </button>
         </div>
       </div>
     </form>
