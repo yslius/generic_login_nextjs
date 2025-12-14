@@ -32,6 +32,13 @@ export const config = {
     Google({
       clientId: process.env.GOOGLE_CLIENT_ID!,
       clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
+      authorization: {
+        params: {
+          prompt: "consent",
+          access_type: "offline",
+          response_type: "code"
+        }
+      }
     }),
     Credentials({
       async authorize(credentials) {
@@ -44,6 +51,7 @@ export const config = {
           const { email, password } = parsedCredentials.data;
           const user = await getUser(email);
           if (!user) return null;
+          if (!user.password) return null;
           const passwordsMatch = await bcrypt.compare(password, user.password);
           if (passwordsMatch) return user;
         }
@@ -52,16 +60,53 @@ export const config = {
     }),
   ],
   basePath: "/api/auth",
+  pages: {
+    signIn: "/login",
+    error: "/login", // エラー時もログインページにリダイレクト
+  },
   callbacks: {
+    async signIn({ user, account, profile }) {
+      // Google OAuthの場合の処理
+      if (account?.provider === "google") {
+        try {
+          // ユーザーが既に存在するか確認
+          const existingUser = await prisma.user.findUnique({
+            where: { email: user.email || undefined },
+          });
+          
+          if (!existingUser && user.email) {
+            // 新規ユーザーの場合は作成（PrismaAdapterが自動的に処理するはずですが、念のため）
+            console.log("Creating new user from Google OAuth:", user.email);
+          }
+          return true;
+        } catch (error) {
+          console.error("Error in signIn callback:", error);
+          return false;
+        }
+      }
+      return true;
+    },
+    async jwt({ token, trigger, session, user }) {
+      if (trigger === "update") {
+        token.name = session.user.name;
+      }
+      if (user) {
+        token.id = user.id;
+      }
+      return token;
+    },
+    async session({ session, token }) {
+      if (session.user) {
+        session.user.id = token.id as string;
+      }
+      return session;
+    },
     authorized({ auth }) {
       return !!auth;
     },
-    jwt({ token, trigger, session }) {
-      if (trigger === "update") token.name = session.user.name;
-      return token;
-    },
   },
   session: { strategy: "jwt" },
+  debug: process.env.NODE_ENV === "development", // 開発環境でデバッグを有効化
 } satisfies NextAuthConfig;
 
 export const { handlers, auth, signIn, signOut } = NextAuth(config);
