@@ -65,7 +65,7 @@ export const config = {
     error: "/login", // エラー時もログインページにリダイレクト
   },
   callbacks: {
-    async signIn({ user, account, profile }) {
+    async signIn({ user, account }) {
       // Google OAuthの場合の処理
       if (account?.provider === "google") {
         try {
