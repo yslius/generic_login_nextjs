@@ -10,6 +10,7 @@ import {
 import { ArrowRightIcon } from '@heroicons/react/20/solid';
 import { Button } from './button';
 import { authenticate } from '@/app/lib/actions';
+import { signIn } from 'next-auth/react';
 import { useSearchParams } from 'next/navigation';
 
 
@@ -67,6 +68,10 @@ export default function LoginForm() {
     setIsPending(true);
     setErrorMessage(null);
     try {
+      const result = await signIn("google", { 
+        callbackUrl: "/mypage",
+        redirect: true,
+      });
       // エラーが発生した場合、URLパラメータでエラーが返される
     } catch (error) {
       console.error("Google sign in error:", error);
