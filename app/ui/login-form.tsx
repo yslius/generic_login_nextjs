@@ -68,7 +68,7 @@ export default function LoginForm() {
     setIsPending(true);
     setErrorMessage(null);
     try {
-      const result = await signIn("google", { 
+      await signIn("google", { 
         callbackUrl: "/mypage",
         redirect: true,
       });
